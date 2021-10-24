@@ -87,4 +87,8 @@ export class UsersService {
   async findOneByUsername(username: string): Promise<User> {
     return this.usersRepository.findOne({ username });
   }
+
+  async findBySubscribedPath(subscribedPath: string): Promise<User> {
+    return this.usersRepository.findOne({ subscribedPath });
+  }
 }

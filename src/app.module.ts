@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { WinstonModule } from 'nest-winston';
 import { LoggerConfig } from './logger/LoggerConfig';
+import { SubscribeModule } from './subscribe/subscribe.module';
 
 @Module({
   imports: [
@@ -23,8 +24,8 @@ import { LoggerConfig } from './logger/LoggerConfig';
     WinstonModule.forRoot(new LoggerConfig().console()),
     UsersModule,
     AuthModule,
+    SubscribeModule,
   ],
   controllers: [AppController],
-  providers: [],
 })
 export class AppModule {}

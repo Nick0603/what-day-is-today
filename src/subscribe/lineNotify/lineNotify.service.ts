@@ -1,0 +1,78 @@
+import { Injectable, Inject } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { LineNotifySubscriber } from './entities/line-notify-subscriber.entity';
+import { UsersService } from '../../users/users.service';
+import { PathNotFoundError } from './lineNotify.exceptions';
+import { Logger } from 'winston';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { CreateSubscribeDto } from './dto/create-subscribe.dto';
+import axios from 'axios';
+import * as qs from 'qs';
+import { isNil } from 'lodash';
+
+@Injectable()
+export class LineNotifyService {
+  constructor(
+    @InjectRepository(LineNotifySubscriber)
+    private subscriberRepository: Repository<LineNotifySubscriber>,
+    private userService: UsersService,
+    private configService: ConfigService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {}
+
+  private getRedirectUri(subscribedPath: string): string {
+    const domain = this.configService.get<string>('SERVER_ORIGIN');
+    const redirectUri = `${domain}/subscribe/line_notify/${subscribedPath}`;
+    return redirectUri;
+  }
+
+  async getRedirectUrl(subscribedPath: string) {
+    const user = await this.userService.findBySubscribedPath(subscribedPath);
+    if (!user) {
+      throw new PathNotFoundError(subscribedPath);
+    }
+    const clientId = this.configService.get<string>('LINE_CLIENT_ID');
+    const redirectUri = this.getRedirectUri(subscribedPath);
+    return `https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&client_id=${clientId}&redirect_uri=${redirectUri}&state=what-day-is-today`;
+  }
+
+  async subscribe(subscribedPath: string, dto: CreateSubscribeDto) {
+    const user = await this.userService.findBySubscribedPath(subscribedPath);
+    if (!user) {
+      throw new PathNotFoundError(subscribedPath);
+    }
+    this.logger.debug(`[line-notify] subscribe code: ${dto.code}`);
+    const data = qs.stringify({
+      code: dto.code,
+      grant_type: 'authorization_code',
+      client_id: this.configService.get<string>('LINE_CLIENT_ID'),
+      redirect_uri: this.getRedirectUri(subscribedPath),
+      client_secret: this.configService.get<string>('LINE_CLIENT_SECRET'),
+    });
+    this.logger.debug(`[line notify] oauth data ${JSON.stringify(data)}`);
+    const options = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+    const result: any = await axios
+      .post('https://notify-bot.line.me/oauth/token', data, options)
+      .catch((e) => {
+        console.log(e);
+        throw e;
+      });
+    const token = result.data.access_token;
+    this.logger.debug(`[line notify] token: ${token}`);
+    if (isNil(token)) {
+      throw new Error('Invalid token');
+    }
+    const subscriber = this.subscriberRepository.create({
+      subscribedUser: user,
+      token,
+    });
+    await this.subscriberRepository.save(subscriber);
+    return subscriber;
+  }
+}
