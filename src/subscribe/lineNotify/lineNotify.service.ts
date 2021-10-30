@@ -75,4 +75,42 @@ export class LineNotifyService {
     await this.subscriberRepository.save(subscriber);
     return subscriber;
   }
+
+  async sendMessage(accessToken: string, message: string) {
+    this.logger.debug(
+      `[line-notify] send message(${message}) to ${accessToken}`,
+    );
+    const options = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+    const data = qs.stringify({ message });
+    await axios.post('https://notify-api.line.me/api/notify', data, options);
+  }
+
+  async getAllActiveSubscribers(): Promise<LineNotifySubscriber[]> {
+    const subscribers = await this.subscriberRepository.find({
+      where: {
+        isActive: true,
+      },
+      relations: ['subscribedUser'],
+    });
+    return subscribers;
+  }
+
+  async getAllActiveSubscriberByPath(
+    path: string,
+  ): Promise<LineNotifySubscriber[]> {
+    const user = await this.userService.findBySubscribedPath(path);
+    if (!user) {
+      throw new PathNotFoundError(path);
+    }
+    const subscribers = await this.subscriberRepository.find({
+      isActive: true,
+      subscribedUser: user,
+    });
+    return subscribers;
+  }
 }

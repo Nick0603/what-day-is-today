@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { WinstonModule } from 'nest-winston';
 import { LoggerConfig } from './logger/LoggerConfig';
 import { SubscribeModule } from './subscribe/subscribe.module';
+import { WorkerModule } from './worker/worker.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -22,9 +24,11 @@ import { SubscribeModule } from './subscribe/subscribe.module';
       synchronize: true,
     }),
     WinstonModule.forRoot(new LoggerConfig().console()),
+    ScheduleModule.forRoot(),
     UsersModule,
     AuthModule,
     SubscribeModule,
+    WorkerModule,
   ],
   controllers: [AppController],
 })
