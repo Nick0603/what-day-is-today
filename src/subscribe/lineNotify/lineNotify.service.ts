@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
 import { LineNotifySubscriber } from './entities/line-notify-subscriber.entity';
 import { UsersService } from '../../users/users.service';
 import { PathNotFoundError } from './lineNotify.exceptions';
@@ -38,7 +39,10 @@ export class LineNotifyService {
     return `https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&client_id=${clientId}&redirect_uri=${redirectUri}&state=what-day-is-today`;
   }
 
-  async subscribe(subscribedPath: string, dto: CreateSubscribeDto) {
+  async subscribe(
+    subscribedPath: string,
+    dto: CreateSubscribeDto,
+  ): Promise<{ subscriber: LineNotifySubscriber; subscribedUser: User }> {
     const user = await this.userService.findBySubscribedPath(subscribedPath);
     if (!user) {
       throw new PathNotFoundError(subscribedPath);
@@ -73,7 +77,10 @@ export class LineNotifyService {
       token,
     });
     await this.subscriberRepository.save(subscriber);
-    return subscriber;
+    return {
+      subscriber,
+      subscribedUser: user,
+    };
   }
 
   async sendMessage(accessToken: string, message: string) {
@@ -87,7 +94,11 @@ export class LineNotifyService {
       },
     };
     const data = qs.stringify({ message });
-    await axios.post('https://notify-api.line.me/api/notify', data, options);
+    try {
+      await axios.post('https://notify-api.line.me/api/notify', data, options);
+    } catch (e) {
+      this.logger.warn(e);
+    }
   }
 
   async getAllActiveSubscribers(): Promise<LineNotifySubscriber[]> {
