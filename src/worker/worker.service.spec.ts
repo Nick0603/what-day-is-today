@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { NotificationsService } from '../notifications/notifications.service';
 import { LineNotifyService } from '../subscribe/lineNotify/lineNotify.service';
 import { WorkerService } from './worker.service';
 
@@ -11,6 +12,10 @@ describe('WorkerService', () => {
         WorkerService,
         {
           provide: LineNotifyService,
+          useValue: {},
+        },
+        {
+          provide: NotificationsService,
           useValue: {},
         },
       ],

@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { SubscribeModule } from './subscribe/subscribe.module';
 import { WorkerModule } from './worker/worker.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     AuthModule,
     SubscribeModule,
     WorkerModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
 })
