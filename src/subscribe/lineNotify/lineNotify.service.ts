@@ -110,6 +110,18 @@ export class LineNotifyService {
     return subscribers;
   }
 
+  async getAllActiveSubscribersForUser(
+    user: User,
+  ): Promise<LineNotifySubscriber[]> {
+    const subscribers = await this.subscriberRepository.find({
+      where: {
+        isActive: true,
+        subscribedUser: user,
+      },
+    });
+    return subscribers;
+  }
+
   async getAllActiveSubscriberByPath(
     path: string,
   ): Promise<LineNotifySubscriber[]> {

@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { NotificationsService } from '../notifications/notifications.service';
 import { WorkerController } from './worker.controller';
 import { WorkerService } from './worker.service';
 
@@ -16,6 +17,12 @@ describe('WorkerController', () => {
         },
         {
           provide: ConfigService,
+          useValue: {
+            get: jest.fn(),
+          },
+        },
+        {
+          provide: NotificationsService,
           useValue: {
             get: jest.fn(),
           },
