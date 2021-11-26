@@ -1,19 +1,14 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { Injectable, Logger } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
 import { LineNotifyService } from '../subscribe/lineNotify/lineNotify.service';
-import { Logger } from 'winston';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { forEach } from 'lodash';
 import * as moment from 'moment';
 
 @Injectable()
 export class WorkerService {
-  constructor(
-    private userService: UsersService,
-    private lineNotifyService: LineNotifyService,
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-  ) {}
+  private readonly logger = new Logger(WorkerService.name);
+
+  constructor(private lineNotifyService: LineNotifyService) {}
 
   async triggerDailyLineNotify() {
     const subscribers = await this.lineNotifyService.getAllActiveSubscribers();

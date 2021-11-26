@@ -1,5 +1,7 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { WorkerController } from './worker.controller';
+import { WorkerService } from './worker.service';
 
 describe('WorkerController', () => {
   let controller: WorkerController;
@@ -7,6 +9,18 @@ describe('WorkerController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [WorkerController],
+      providers: [
+        {
+          provide: WorkerService,
+          useValue: {},
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<WorkerController>(WorkerController);

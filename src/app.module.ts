@@ -4,8 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { WinstonModule } from 'nest-winston';
-import { LoggerConfig } from './logger/LoggerConfig';
 import { SubscribeModule } from './subscribe/subscribe.module';
 import { WorkerModule } from './worker/worker.module';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -23,7 +21,6 @@ import { ScheduleModule } from '@nestjs/schedule';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-    WinstonModule.forRoot(new LoggerConfig().console()),
     ScheduleModule.forRoot(),
     UsersModule,
     AuthModule,

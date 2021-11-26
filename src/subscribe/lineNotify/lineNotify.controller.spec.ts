@@ -8,7 +8,12 @@ describe('LineNotifyController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [LineNotifyController],
-      providers: [LineNotifyService],
+      providers: [
+        {
+          provide: LineNotifyService,
+          useValue: {},
+        },
+      ],
     }).compile();
 
     controller = module.get<LineNotifyController>(LineNotifyController);

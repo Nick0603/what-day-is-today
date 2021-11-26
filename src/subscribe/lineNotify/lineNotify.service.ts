@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -6,8 +6,6 @@ import { User } from '../../users/entities/user.entity';
 import { LineNotifySubscriber } from './entities/line-notify-subscriber.entity';
 import { UsersService } from '../../users/users.service';
 import { PathNotFoundError } from './lineNotify.exceptions';
-import { Logger } from 'winston';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { CreateSubscribeDto } from './dto/create-subscribe.dto';
 import axios from 'axios';
 import * as qs from 'qs';
@@ -15,12 +13,13 @@ import { isNil } from 'lodash';
 
 @Injectable()
 export class LineNotifyService {
+  private readonly logger = new Logger(LineNotifyService.name);
+
   constructor(
     @InjectRepository(LineNotifySubscriber)
     private subscriberRepository: Repository<LineNotifySubscriber>,
     private userService: UsersService,
     private configService: ConfigService,
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   private getRedirectUri(subscribedPath: string): string {

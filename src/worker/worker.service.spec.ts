@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LineNotifyService } from '../subscribe/lineNotify/lineNotify.service';
 import { WorkerService } from './worker.service';
 
 describe('WorkerService', () => {
@@ -6,7 +7,13 @@ describe('WorkerService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [WorkerService],
+      providers: [
+        WorkerService,
+        {
+          provide: LineNotifyService,
+          useValue: {},
+        },
+      ],
     }).compile();
 
     service = module.get<WorkerService>(WorkerService);
