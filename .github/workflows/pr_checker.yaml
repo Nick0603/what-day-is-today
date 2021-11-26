@@ -1,0 +1,21 @@
+name: pull-request
+on:
+  pull_request:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.18.0
+      - name: Install node dependencies
+        run: yarn install
+      - name: Run linter
+        run: yarn run lint:check
+      - name: Run code style checker
+        run: yarn run format:check
+      - name: Run tests 
+        run: yarn run test:cov

@@ -15,7 +15,7 @@ export class LineNotifySubscriber {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne((type) => User)
+  @ManyToOne(() => User)
   @JoinColumn()
   subscribedUser: User;
 
