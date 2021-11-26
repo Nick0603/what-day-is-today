@@ -2,23 +2,22 @@ import {
   Controller,
   Post,
   Body,
-  Inject,
+  Logger,
   HttpException,
   HttpStatus,
   Param,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WorkerService } from './worker.service';
-import { Logger } from 'winston';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { TestLineNotifyDto } from './dto/test-line-notify.dto';
 
 @Controller('worker')
 export class WorkerController {
+  private readonly logger = new Logger(WorkerController.name);
+
   constructor(
     private readonly workerService: WorkerService,
     private readonly configService: ConfigService,
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @Post('trigger/line_notify')

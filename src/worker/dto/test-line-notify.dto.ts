@@ -1,5 +1,4 @@
-import { IsString, IsNotEmpty, MinLength, IsDate } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsString, IsNotEmpty } from 'class-validator';
 
 export class TestLineNotifyDto {
   @IsNotEmpty()

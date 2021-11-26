@@ -7,21 +7,17 @@ import {
   HttpStatus,
   Param,
   Res,
-  Inject,
+  Logger,
 } from '@nestjs/common';
 import { CreateSubscribeDto } from './dto/create-subscribe.dto';
 import { PathNotFoundError } from './lineNotify.exceptions';
 import { LineNotifyService } from './lineNotify.service';
-import { Logger } from 'winston';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import * as moment from 'moment';
 
 @Controller('subscribe/line_notify')
 export class LineNotifyController {
-  constructor(
-    private readonly lineNotifyService: LineNotifyService,
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-  ) {}
+  private readonly logger = new Logger(LineNotifyController.name);
+  constructor(private readonly lineNotifyService: LineNotifyService) {}
 
   @Get(':path/redirect')
   async redirectToAuth(@Param('path') path, @Res() res) {
