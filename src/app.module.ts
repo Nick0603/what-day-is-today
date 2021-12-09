@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { SubscribeModule } from './subscribe/subscribe.module';
-import { WorkerModule } from './worker/worker.module';
+import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { SubscribeModule } from './modules/subscribe/subscribe.module';
+import { WorkerModule } from './modules/worker/worker.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { NotificationsModule } from './notifications/notifications.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { AdminNotificationsController } from './controllers/admin/admin-notifications.controller copy';
+import { AdminUsersController } from './controllers/admin/admin-users.controller';
 
 @Module({
   imports: [
@@ -29,6 +30,6 @@ import { NotificationsModule } from './notifications/notifications.module';
     WorkerModule,
     NotificationsModule,
   ],
-  controllers: [AppController],
+  controllers: [AdminNotificationsController, AdminUsersController],
 })
 export class AppModule {}

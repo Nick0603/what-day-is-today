@@ -4,6 +4,7 @@ import { CreateNotificationDto } from './dto/create-notification.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
+import { UpdateNotificationDto } from './dto/update-notification.dto';
 
 @Injectable()
 export class NotificationsService {
@@ -12,10 +13,12 @@ export class NotificationsService {
     private notificationRepository: Repository<Notification>,
   ) {}
 
-  async create(
-    createNotificationDto: CreateNotificationDto,
-  ): Promise<Notification> {
-    const entity = this.notificationRepository.create(createNotificationDto);
+  async create(dto: CreateNotificationDto): Promise<Notification> {
+    const scheduleAt = Math.floor(dto.scheduleAt / 1000);
+    const entity = this.notificationRepository.create({
+      ...dto,
+      scheduleAt,
+    });
     await this.notificationRepository.save(entity);
     return entity;
   }
@@ -28,6 +31,23 @@ export class NotificationsService {
     return this.notificationRepository.findOne(id);
   }
 
+  async updateOne(
+    id: number,
+    dto: UpdateNotificationDto,
+  ): Promise<Notification> {
+    const notification = await this.findOne(id);
+    notification.message = dto.message;
+    notification.isPushed = dto.isPushed;
+    if (typeof dto.scheduleAt === 'string') {
+      notification.scheduleAt = Math.floor(
+        new Date(dto.scheduleAt).getTime() / 1000,
+      );
+    } else {
+      notification.scheduleAt = Math.floor(dto.scheduleAt / 1000);
+    }
+    await this.notificationRepository.save(notification);
+    return notification;
+  }
   private getNowInSecondFormat(): number {
     return Math.floor(Date.now() / 1000);
   }

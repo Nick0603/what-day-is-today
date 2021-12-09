@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { LoggerConfig } from './logger/LoggerConfig';
+import { LoggerConfig } from './modules/logger/LoggerConfig';
 import { WinstonModule } from 'nest-winston';
 
 async function bootstrap() {
@@ -14,6 +14,7 @@ async function bootstrap() {
       disableErrorMessages: process.env.NODE_ENV === 'production',
     }),
   );
+  app.enableCors();
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();

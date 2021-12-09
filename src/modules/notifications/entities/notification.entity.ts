@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { NotificationType } from '../constants/enum';
 
@@ -15,7 +16,11 @@ export class Notification {
   id: number;
 
   @ManyToOne(() => User)
+  @JoinColumn({ name: 'userId' })
   user: User;
+
+  @Column({ nullable: true })
+  userId: number;
 
   @Column()
   message: string;
