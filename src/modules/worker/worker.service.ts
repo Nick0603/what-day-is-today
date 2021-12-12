@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { User } from '../users/entities/user.entity';
+import { UserEntity } from '../users/entities/user.entity';
 import { LineNotifyService } from '../subscribe/lineNotify/lineNotify.service';
 import { forEach, filter } from 'lodash';
 import * as moment from 'moment';
@@ -22,7 +22,7 @@ export class WorkerService {
       `[worker daily line-notify] subscribers: ${JSON.stringify(subscribers)}`,
     );
     forEach(subscribers, async (sub) => {
-      const user: User = sub.subscribedUser;
+      const user: UserEntity = sub.subscribedUser;
       const anniversaryDate = user.anniversaryDate;
       const anniversary = moment([
         anniversaryDate.getFullYear(),

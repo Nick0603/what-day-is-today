@@ -6,11 +6,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserRole } from '../constants/enum';
 
-@Entity()
 @Unique(['username'])
 @Unique(['subscribedPath'])
-export class User {
+@Entity('users')
+export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,6 +23,9 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @Column({ default: UserRole.normal, type: 'varchar' })
+  role: UserRole;
 
   @Column()
   subscribedPath: string;

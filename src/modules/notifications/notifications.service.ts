@@ -38,6 +38,9 @@ export class NotificationsService {
     const notification = await this.findOne(id);
     notification.message = dto.message;
     notification.isPushed = dto.isPushed;
+    if (dto.user) {
+      notification.user = dto.user;
+    }
     if (typeof dto.scheduleAt === 'string') {
       notification.scheduleAt = Math.floor(
         new Date(dto.scheduleAt).getTime() / 1000,

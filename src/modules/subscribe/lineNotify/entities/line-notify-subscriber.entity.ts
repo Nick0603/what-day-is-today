@@ -8,16 +8,16 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-import { User } from '../../../users/entities/user.entity';
+import { UserEntity } from '../../../users/entities/user.entity';
 
 @Entity()
 export class LineNotifySubscriber {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => UserEntity)
   @JoinColumn()
-  subscribedUser: User;
+  subscribedUser: UserEntity;
 
   @Column()
   token: string;

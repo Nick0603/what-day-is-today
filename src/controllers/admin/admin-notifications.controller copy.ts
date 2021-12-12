@@ -6,6 +6,7 @@ import {
   Body,
   UseInterceptors,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 import { NotificationsService } from '../../modules/notifications/notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
@@ -14,7 +15,12 @@ import { Notification } from '../../modules/notifications/entities/notification.
 import { UsersService } from '../../modules/users/users.service';
 import { TotalHeaderInterceptor } from '../../interceptors/total-header.interceptor';
 import { map } from 'lodash';
+import { JwtAuthGuard } from '../../modules/auth/jwt-auth.guard';
+import { RoleGuard } from '../../modules/auth/role.guard';
+import { UserRole } from '../../modules/users/constants/enum';
 
+@UseInterceptors(TotalHeaderInterceptor)
+@UseGuards(JwtAuthGuard, RoleGuard(UserRole.admin))
 @Controller('admin/notifications')
 export class AdminNotificationsController {
   constructor(
@@ -42,6 +48,7 @@ export class AdminNotificationsController {
 
   @Put('/:id')
   async UpdateOne(@Param('id') id: number, @Body() dto: UpdateNotificationDto) {
+    dto.user = await this.usersService.findOne(dto.userId);
     const notification = await this.notificationsService.updateOne(id, dto);
     return notification;
   }

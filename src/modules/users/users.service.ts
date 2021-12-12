@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcryptjs';
@@ -14,8 +14,8 @@ import {
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private usersRepository: Repository<UserEntity>,
   ) {}
 
   private async hashPassword(password: string): Promise<string> {
@@ -26,7 +26,7 @@ export class UsersService {
     return passwordHash;
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     const existUser = await this.usersRepository.findOne({
       where: [
         { username: createUserDto.username },
@@ -73,15 +73,15 @@ export class UsersService {
     return this.usersRepository.update(id, updateUserDto);
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserEntity[]> {
     return this.usersRepository.find();
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: number): Promise<UserEntity> {
     return this.usersRepository.findOne(id);
   }
 
-  async findByIds(ids: number[]): Promise<User[]> {
+  async findByIds(ids: number[]): Promise<UserEntity[]> {
     return this.usersRepository.find({
       where: {
         id: ids,
@@ -89,11 +89,11 @@ export class UsersService {
     });
   }
 
-  async findOneByUsername(username: string): Promise<User> {
+  async findOneByUsername(username: string): Promise<UserEntity> {
     return this.usersRepository.findOne({ username });
   }
 
-  async findBySubscribedPath(subscribedPath: string): Promise<User> {
+  async findBySubscribedPath(subscribedPath: string): Promise<UserEntity> {
     return this.usersRepository.findOne({ subscribedPath });
   }
 }

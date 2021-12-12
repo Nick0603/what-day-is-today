@@ -1,4 +1,4 @@
-import { User } from '../../users/entities/user.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import {
   Entity,
   Column,
@@ -15,9 +15,9 @@ export class Notification {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user: UserEntity;
 
   @Column({ nullable: true })
   userId: number;

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../../users/entities/user.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import { LineNotifySubscriber } from './entities/line-notify-subscriber.entity';
 import { UsersService } from '../../users/users.service';
 import { PathNotFoundError } from './lineNotify.exceptions';
@@ -41,7 +41,7 @@ export class LineNotifyService {
   async subscribe(
     subscribedPath: string,
     dto: CreateSubscribeDto,
-  ): Promise<{ subscriber: LineNotifySubscriber; subscribedUser: User }> {
+  ): Promise<{ subscriber: LineNotifySubscriber; subscribedUser: UserEntity }> {
     const user = await this.userService.findBySubscribedPath(subscribedPath);
     if (!user) {
       throw new PathNotFoundError(subscribedPath);
@@ -111,7 +111,7 @@ export class LineNotifyService {
   }
 
   async getAllActiveSubscribersForUser(
-    user: User,
+    user: UserEntity,
   ): Promise<LineNotifySubscriber[]> {
     const subscribers = await this.subscriberRepository.find({
       where: {

@@ -1,9 +1,9 @@
-import { User } from '../../users/entities/user.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import { IsString, IsNotEmpty, IsEnum, IsNumber } from 'class-validator';
 import { NotificationType } from '../constants/enum';
 
 export class CreateNotificationDto {
-  user: User;
+  user: UserEntity;
 
   @IsNotEmpty()
   @IsString()
